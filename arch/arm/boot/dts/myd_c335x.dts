@@ -206,7 +206,15 @@
 			0x1A0 (PIN_OUTPUT_PULLDOWN | MUX_MODE7)
 		>;
 	};
-	
+	myspi1_pins_default: myspi1_pins_default {
+		pinctrl-single,pins = <
+			0x190 ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (A13) mcasp0_aclkx.spi1_sclk */
+			0x194 ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (B13) mcasp0_fsx.spi1_d0 */
+			0x198 ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (D12) mcasp0_axr0.spi1_d1 */
+			0x19c ( PIN_INPUT_PULLUP | MUX_MODE3 ) /* (C12) mcasp0_ahclkr.spi1_cs0 */
+	>;
+};
+
 	i2c0_pins: pinmux_i2c0_pins {
 		pinctrl-single,pins = <
 			0x188 (PIN_INPUT_PULLUP | MUX_MODE0)	/* i2c0_sda.i2c0_sda */
@@ -506,24 +514,6 @@
 		>;
 	};
 
-	am335x_evm_audio_pins: am335x_evm_audio_pins {
-		pinctrl-single,pins = <
-			0x190 (PIN_INPUT_PULLDOWN | MUX_MODE0) /* A13 "mcasp0_aclkx.mcasp0_aclkx" */
-			0x194 (PIN_INPUT_PULLDOWN | MUX_MODE0) /* B13 "mcasp0_fsx.mcasp0_fsx" */
-			0x19c (PIN_INPUT_PULLDOWN | MUX_MODE2) /* C12  "mcasp0_ahclkr.mcasp0_axr2" */
-			0x1a8 (PIN_INPUT_PULLDOWN | MUX_MODE0) /* D13 "mcasp0_axr1.mcasp0_axr1" */
-		>;
-	};
-
-	am335x_evm_audio_pins_sleep: am335x_evm_audio_pins_sleep {
-		pinctrl-single,pins = <
-			0x190 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* A13 "mcasp0_aclkx.mcasp0_aclkx" */
-			0x194 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* B13 "mcasp0_fsx.mcasp0_fsx" */
-			0x19c (PIN_INPUT_PULLDOWN | MUX_MODE7) /* C12  "mcasp0_ahclkr.mcasp0_axr2" */
-			0x1a8 (PIN_INPUT_PULLDOWN | MUX_MODE7) /* D13 "mcasp0_axr1.mcasp0_axr1" */
-		>;
-	};
-
 	dcan0_pins_default: dcan0_pins_default {
 		pinctrl-single,pins = <
 			0x178 (PIN_OUTPUT_PULLUP | MUX_MODE2) /* uart1_ctsn.d_can0_tx */
@@ -604,6 +594,19 @@
 
 &cppi41dma  {
 	status = "okay";
+};
+&spi1{
+
+    status = "okay";
+        pinctrl-names = "default";
+        pinctrl-0 = <&myspi1_pins_default>;
+        ti,pindir-d0-in-d1-out =<1>;
+
+        spi@0 {
+                compatible = "rohm,dh2228fv";
+                spi-max-frequency = <48000000>;
+                reg = <0x0>;
+        };
 };
 
 &i2c1 {
@@ -739,25 +742,6 @@
 	};
 };
 
-&mcasp0 {
-		pinctrl-names = "default", "sleep";
-		pinctrl-0 = <&am335x_evm_audio_pins>;
-		pinctrl-1 = <&am335x_evm_audio_pins_sleep>;
-
-		status = "okay";
-
-		op-mode = <0>;          /* MCASP_IIS_MODE */
-		tdm-slots = <2>;
-		/* 4 serializers */
-		serial-dir = <  /* 0: INACTIVE, 1: TX, 2: RX */
-			0 1 2 0
-			0 0 0 0
-			0 0 0 0
-			0 0 0 0
-		>;
-		tx-num-evt = <1>;
-		rx-num-evt = <1>;
-};
 
 &mac {
 	slaves = <2>;
