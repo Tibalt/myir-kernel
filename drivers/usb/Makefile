@@ -63,4 +63,4 @@ obj-$(CONFIG_USB_COMMON)	+= common/
 obj-$(CONFIG_USB_OTG)		+= common/
 
 obj-$(CONFIG_USBIP_CORE)	+= usbip/
-obj-y                       += xr_usb
+obj-y                       += xr_usb/
